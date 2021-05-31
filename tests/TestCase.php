@@ -1,6 +1,7 @@
 <?php
 
 use Database\Factories\TopicFactory;
+use Illuminate\Database\Eloquent\Model;
 use Laravel\Lumen\Application;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 use Laravel\Lumen\Testing\TestCase as BaseTestCase;
@@ -18,9 +19,9 @@ abstract class TestCase extends BaseTestCase
         return require __DIR__.'/../bootstrap/app.php';
     }
 
-    public function createTestTopic()
+    public function createTestTopic(): Model
     {
-        (new TopicFactory())->createOne([
+        return (new TopicFactory())->createOne([
             'name' => 'topic1'
         ]);
     }

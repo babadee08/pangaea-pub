@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Components\AppResponse;
+use App\Events\MessagePublishedEvent;
 use App\Services\TopicService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Event;
 use Symfony\Component\HttpFoundation\Response;
 
 class PublisherController extends Controller
@@ -25,6 +27,8 @@ class PublisherController extends Controller
         ]);
 
         $topic = $this->topicService->getTopicByName($topic);
+
+        Event::dispatch(new MessagePublishedEvent($topic, []));
 
         return AppResponse::success([], Response::HTTP_CREATED);
     }
