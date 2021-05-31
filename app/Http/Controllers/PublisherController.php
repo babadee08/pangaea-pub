@@ -7,6 +7,7 @@ use App\Services\PublisherService;
 use App\Services\TopicService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 
 class PublisherController extends Controller
@@ -20,14 +21,24 @@ class PublisherController extends Controller
         $this->topicService = $topicService;
     }
 
+    /**
+     * @throws ValidationException
+     */
     public function publish(Request $request, string $topic): JsonResponse
     {
-        $this->validate($request, []);
+        if (!is_array($request->all()) || empty($request->all())) {
+            return AppResponse::error('Invalid data');
+        }
+
+        $data = $request->all();
 
         $topic = $this->topicService->getTopicByName($topic);
 
-        $this->publisherService->publishMessage($topic, []);
+        $this->publisherService->publishMessage($topic, $data);
 
-        return AppResponse::success([], Response::HTTP_CREATED);
+        return AppResponse::success([
+            'topic' => $topic->name,
+            'data' => $data,
+        ], Response::HTTP_CREATED);
     }
 }
