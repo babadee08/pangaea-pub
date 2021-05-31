@@ -40,3 +40,9 @@ Starting a local php web server
 ```bash 
 $ php -S localhost:8000 -t public/
 ```
+
+## Caveats.
+- One improvement that can be made would be to use pass an Id to the Event rather than using passing 
+an object. This would make migrating to other forms of queues easier.
+- Missing bells and whistles such as docker, a built-in CI/CD (using Github actions).
+- Tests also only follows the happy path. This can also be improved to be more comprehensive
