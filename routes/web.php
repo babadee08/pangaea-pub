@@ -18,3 +18,5 @@ $router->get('/', function () use ($router) {
 });
 
 $router->post('/subscribe/{topic}', 'TopicSubscriberController@subscribe');
+
+$router->post('/publish/{topic}', 'PublisherController@publish');
