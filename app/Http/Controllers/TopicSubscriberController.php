@@ -2,22 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Subscriber;
-use App\Models\Topic;
+use App\Components\AppResponse;
+use App\Services\SubscriberService;
+use App\Services\TopicService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class TopicSubscriberController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    private SubscriberService $subscriberService;
+
+    private TopicService $topicService;
+
+    public function __construct(SubscriberService $subscriberService, TopicService $topicService)
     {
-        //
+        $this->subscriberService = $subscriberService;
+        $this->topicService = $topicService;
     }
 
     public function subscribe(Request $request, string $topic): JsonResponse
@@ -26,16 +27,10 @@ class TopicSubscriberController extends Controller
             'url' => 'required|url'
         ]);
 
-        $topic = Topic::where('name', $topic)->first();
+        $topic = $this->topicService->getTopicByName($topic);
 
-        $subscribed = new Subscriber;
-        $subscribed->topic_id = $topic->id;
-        $subscribed->url = $request->input('url');
-        $subscribed->save();
+        $response = $this->subscriberService->subscribeToTopic($topic, $request->input('url'));
 
-        return response()->json([
-            'url' => $subscribed->url,
-            'topic' => $topic->name
-        ], Response::HTTP_CREATED);
+        return AppResponse::success($response, Response::HTTP_CREATED);
     }
 }

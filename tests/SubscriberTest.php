@@ -27,4 +27,23 @@ class SubscriberTest extends TestCase
                 'url' => 'https://mysubscriber.test',
             ]);
     }
+
+    /**
+     * @test
+     */
+    public function cannot_subscribe_to_unknown_topic()
+    {
+        $body = [
+            'url' => 'https://mysubscriber.test',
+        ];
+
+        $response = $this->post('/subscribe/topic2', $body);
+
+        $response->assertResponseStatus(Response::HTTP_NOT_FOUND);
+
+        $response->seeJsonContains([
+            'status' => 'error',
+            'message' => 'Unknown Topic',
+        ]);
+    }
 }
