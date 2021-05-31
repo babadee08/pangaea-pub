@@ -37,10 +37,11 @@ class NotifySubscribersListener implements ShouldQueue
         $subscribers = $topic->subscribers;
 
         foreach ($subscribers as $subscriber) {
-            $url = $subscriber->url;
-            $response = Http::withHeaders([
+            $headers = [
                 'Content-Type' => 'application/json'
-            ])->post($url, [
+            ];
+
+            $response = Http::withHeaders($headers)->post($subscriber->url, [
                 'topic' => $topic->name,
                 'data' => $data
             ]);
